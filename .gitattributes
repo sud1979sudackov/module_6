@@ -1,2 +1,14 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+function checkPalindrome(word) {
+  // Приводим слово к нижнему регистру и убираем пробелы (если они есть)
+  const processedWord = word.toLowerCase().replace(/\s/g, '');
+  
+  // Разбиваем слово на массив символов, переворачиваем и соединяем обратно
+  const reversedWord = processedWord.split('').reverse().join('');
+  
+  // Сравниваем исходное слово с перевернутым
+  if (processedWord === reversedWord) {
+    console.log(`Слово ${word} является палиндромом`);
+  } else {
+    console.log(`Слово ${word} не является палиндромом`);
+  }
+}
