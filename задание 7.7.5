@@ -1,0 +1,14 @@
+function getUniqueSortedNumbers(arr) {
+  // Получаем уникальные числа через Set
+  const uniqueNumbers = [...new Set(arr)];
+  
+  // Сортируем числа по возрастанию
+  const sortedNumbers = uniqueNumbers.sort((a, b) => a - b);
+  
+  return sortedNumbers;
+}
+
+// Пример использования:
+const numbers = [3, 1, 2, 2, 4, 5, 5, 3];
+const result = getUniqueSortedNumbers(numbers);
+console.log(result); // [1, 2, 3, 4, 5]
