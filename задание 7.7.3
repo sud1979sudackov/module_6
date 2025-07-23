@@ -1,0 +1,16 @@
+const users = [
+    { name: "Алексей", age: 25 },
+    { name: "Мария", age: 17 },
+    { name: "Иван", age: 30 },
+    { name: "Ольга", age: 16 },
+    { name: "Дмитрий", age: 18 }
+];
+
+// Фильтрация пользователей (возраст >= 18)
+const adults = users.filter(user => user.age >= 18);
+
+// Создание массива имён
+const names = adults.map(user => user.name);
+
+console.log(adults); // Массив пользователей ≥ 18 лет
+console.log(names);  // Массив имён: ["Алексей", "Иван", "Дмитрий"]
