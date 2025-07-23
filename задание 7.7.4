@@ -1,0 +1,19 @@
+// Функция для установки fullName любому объекту
+function setFullName(fullName) {
+    this.fullName = fullName;
+}
+
+// Объект person (из предыдущего примера)
+const person = {
+    name: "Иван",
+    age: 30
+};
+
+// Создаём новую функцию, привязанную к объекту person
+const setPersonFullName = setFullName.bind(person);
+
+// Устанавливаем fullName для person
+setPersonFullName("John Smith");
+
+// Проверяем изменения
+console.log(person); // { name: "Иван", age: 30, fullName: "John Smith" }
