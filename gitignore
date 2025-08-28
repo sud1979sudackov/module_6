@@ -35,6 +35,494 @@ kanban-board/
 │   │   └── constants.js
 │   ├── App.jsx
 │   ├── App.module.css
+
 │   └── index.js
+Установка зависимостей
+npx create-react-app kanban-board
+cd kanban-board
+npm install react-router-dom
 ├── package.json
 └── README.md
+Реализация основных компонентов
+1. Константы (utils/constants.js)
+export const COLUMNS = {
+  BACKLOG: 'backlog',
+  READY: 'ready', 
+  IN_PROGRESS: 'inProgress',
+  FINISHED: 'finished'
+};
+
+export const COLUMN_TITLES = {
+  [COLUMNS.BACKLOG]: 'Backlog',
+  [COLUMNS.READY]: 'Ready',
+  [COLUMNS.IN_PROGRESS]: 'In Progress',
+  [COLUMNS.FINISHED]: 'Finished'
+};
+
+export const initialData = [
+  {
+    id: COLUMNS.BACKLOG,
+    title: COLUMN_TITLES[COLUMNS.BACKLOG],
+    issues: [
+      {
+        id: '1',
+        name: 'Sprint bugfix',
+        description: 'Fix all the bugs'
+      }
+    ]
+  },
+  {
+    id: COLUMNS.READY,
+    title: COLUMN_TITLES[COLUMNS.READY],
+    issues: []
+  },
+  {
+    id: COLUMNS.IN_PROGRESS,
+    title: COLUMN_TITLES[COLUMNS.IN_PROGRESS],
+    issues: []
+  },
+  {
+    id: COLUMNS.FINISHED,
+    title: COLUMN_TITLES[COLUMNS.FINISHED],
+    issues: []
+  }
+];
+Хук useLocalStorage (hooks/useLocalStorage.js)
+import { useState, useEffect } from 'react';
+
+export const useLocalStorage = (key, initialValue) => {
+  const [value, setValue] = useState(() => {
+    const storedValue = localStorage.getItem(key);
+    return storedValue ? JSON.parse(storedValue) : initialValue;
+  });
+
+  useEffect(() => {
+    localStorage.setItem(key, JSON.stringify(value));
+  }, [key, value]);
+
+  return [value, setValue];
+};
+Главный компонент App.jsx
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Header from './components/Header/Header';
+import Footer from './components/Footer/Footer';
+import Board from './components/Board/Board';
+import TaskDetail from './components/TaskDetail/TaskDetail';
+import { useLocalStorage } from './hooks/useLocalStorage';
+import { initialData } from './utils/constants';
+import styles from './App.module.css';
+
+function App() {
+  const [data, setData] = useLocalStorage('kanban-data', initialData);
+
+  return (
+    <Router>
+      <div className={styles.app}>
+        <Header />
+        <main className={styles.main}>
+          <Routes>
+            <Route path="/" element={<Board data={data} setData={setData} />} />
+            <Route path="/tasks/:taskId" element={<TaskDetail data={data} setData={setData} />} />
+          </Routes>
+        </main>
+        <Footer data={data} />
+      </div>
+    </Router>
+  );
+}
+
+export default App;
+Компонент Board (components/Board/Board.jsx)
+import React from 'react';
+import Column from '../Column/Column';
+import styles from './Board.module.css';
+
+const Board = ({ data, setData }) => {
+  const updateColumn = (columnId, newIssues) => {
+    setData(prev => prev.map(column => 
+      column.id === columnId ? { ...column, issues: newIssues } : column
+    ));
+  };
+
+  return (
+    <div className={styles.board}>
+      {data.map(column => (
+        <Column
+          key={column.id}
+          column={column}
+          allColumns={data}
+          onUpdate={updateColumn}
+        />
+      ))}
+    </div>
+  );
+};
+
+export default Board;
+Компонент Column (components/Column/Column.jsx)
+import React, { useState } from 'react';
+import Task from '../Task/Task';
+import AddTaskForm from '../AddTaskForm/AddTaskForm';
+import styles from './Column.module.css';
+import { COLUMNS } from '../../utils/constants';
+
+const Column = ({ column, allColumns, onUpdate }) => {
+  const [isAdding, setIsAdding] = useState(false);
+
+  const getSourceColumn = () => {
+    switch (column.id) {
+      case COLUMNS.READY: return COLUMNS.BACKLOG;
+      case COLUMNS.IN_PROGRESS: return COLUMNS.READY;
+      case COLUMNS.FINISHED: return COLUMNS.IN_PROGRESS;
+      default: return null;
+    }
+  };
+
+  const sourceColumn = getSourceColumn();
+  const sourceIssues = sourceColumn 
+    ? allColumns.find(col => col.id === sourceColumn)?.issues || []
+    : [];
+
+  const handleAddTask = (taskName) => {
+    if (column.id === COLUMNS.BACKLOG) {
+      const newTask = {
+        id: Date.now().toString(),
+        name: taskName,
+        description: ''
+      };
+      onUpdate(column.id, [...column.issues, newTask]);
+    }
+    setIsAdding(false);
+  };
+
+  const handleMoveTask = (taskId) => {
+    if (!sourceColumn) return;
+
+    const sourceCol = allColumns.find(col => col.id === sourceColumn);
+    const task = sourceCol.issues.find(issue => issue.id === taskId);
+    
+    if (task) {
+      // Remove from source
+      onUpdate(sourceColumn, sourceCol.issues.filter(issue => issue.id !== taskId));
+      // Add to current
+      onUpdate(column.id, [...column.issues, task]);
+    }
+  };
+
+  const isAddButtonDisabled = column.id !== COLUMNS.BACKLOG && sourceIssues.length === 0;
+
+  return (
+    <div className={styles.column}>
+      <h3 className={styles.title}>{column.title}</h3>
+      
+      <div className={styles.tasks}>
+        {column.issues.map(task => (
+          <Task key={task.id} task={task} />
+        ))}
+      </div>
+
+      <AddTaskForm
+        columnId={column.id}
+        isAdding={isAdding}
+        isDisabled={isAddButtonDisabled}
+        sourceIssues={sourceIssues}
+        onAdd={handleAddTask}
+        onMove={handleMoveTask}
+        onToggle={() => setIsAdding(!isAdding)}
+      />
+    </div>
+  );
+};
+
+export default Column;
+6. Компонент Task (components/Task/Task.jsx)
+javascript
+import React from 'react';
+import { Link } from 'react-router-dom';
+import styles from './Task.module.css';
+
+const Task = ({ task }) => {
+  return (
+    <Link to={`/tasks/${task.id}`} className={styles.taskLink}>
+      <div className={styles.task}>
+        <h4 className={styles.taskTitle}>{task.name}</h4>
+        {task.description && (
+          <p className={styles.taskDescription}>{task.description}</p>
+        )}
+      </div>
+    </Link>
+  );
+};
+
+export default Task;
+7. Компонент AddTaskForm (components/AddTaskForm/AddTaskForm.jsx)
+javascript
+import React, { useState } from 'react';
+import styles from './AddTaskForm.module.css';
+import { COLUMNS } from '../../utils/constants';
+
+const AddTaskForm = ({ columnId, isAdding, isDisabled, sourceIssues, onAdd, onMove, onToggle }) => {
+  const [inputValue, setInputValue] = useState('');
+  const [selectedTask, setSelectedTask] = useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    if (columnId === COLUMNS.BACKLOG) {
+      if (inputValue.trim()) {
+        onAdd(inputValue.trim());
+        setInputValue('');
+      }
+    } else {
+      if (selectedTask) {
+        onMove(selectedTask);
+        setSelectedTask('');
+      }
+    }
+  };
+
+  if (columnId === COLUMNS.BACKLOG) {
+    return (
+      <div className={styles.addForm}>
+        {isAdding ? (
+          <form onSubmit={handleSubmit} className={styles.form}>
+            <input
+              type="text"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              placeholder="Enter task name"
+              className={styles.input}
+              autoFocus
+            />
+            <button type="submit" className={styles.submitButton}>
+              Submit
+            </button>
+          </form>
+        ) : (
+          <button
+            onClick={onToggle}
+            disabled={isDisabled}
+            className={`${styles.addButton} ${isDisabled ? styles.disabled : ''}`}
+          >
+            + Add card
+          </button>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.addForm}>
+      {isAdding ? (
+        <form onSubmit={handleSubmit} className={styles.form}>
+          <select
+            value={selectedTask}
+            onChange={(e) => setSelectedTask(e.target.value)}
+            className={styles.select}
+          >
+            <option value="">Select a task</option>
+            {sourceIssues.map(task => (
+              <option key={task.id} value={task.id}>
+                {task.name}
+              </option>
+            ))}
+          </select>
+          <button 
+            type="submit" 
+            disabled={!selectedTask}
+            className={styles.submitButton}
+          >
+            Submit
+          </button>
+        </form>
+      ) : (
+        <button
+          onClick={onToggle}
+          disabled={isDisabled}
+          className={`${styles.addButton} ${isDisabled ? styles.disabled : ''}`}
+        >
+          + Add card
+        </button>
+      )}
+    </div>
+  );
+};
+
+export default AddTaskForm;
+8. Компонент TaskDetail (components/TaskDetail/TaskDetail.jsx)
+javascript
+import React, { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import styles from './TaskDetail.module.css';
+
+const TaskDetail = ({ data, setData }) => {
+  const { taskId } = useParams();
+  const navigate = useNavigate();
+  
+  const task = data.flatMap(col => col.issues).find(issue => issue.id === taskId);
+  const [isEditing, setIsEditing] = useState(false);
+  const [description, setDescription] = useState(task?.description || '');
+
+  if (!task) {
+    return <div>Task not found</div>;
+  }
+
+  const handleSaveDescription = () => {
+    setData(prev => prev.map(column => ({
+      ...column,
+      issues: column.issues.map(issue => 
+        issue.id === taskId ? { ...issue, description } : issue
+      )
+    })));
+    setIsEditing(false);
+  };
+
+  return (
+    <div className={styles.taskDetail}>
+      <button onClick={() => navigate('/')} className={styles.closeButton}>
+        ×
+      </button>
+      
+      <h1 className={styles.title}>{task.name}</h1>
+      
+      <div className={styles.descriptionSection}>
+        <h3>Description</h3>
+        {isEditing ? (
+          <div className={styles.editMode}>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className={styles.textarea}
+              rows={4}
+            />
+            <button onClick={handleSaveDescription} className={styles.saveButton}>
+              Save
+            </button>
+          </div>
+        ) : (
+          <div className={styles.viewMode}>
+            <p className={styles.description}>
+              {description || 'This task has no description'}
+            </p>
+            <button 
+              onClick={() => setIsEditing(true)}
+              className={styles.editButton}
+            >
+              Edit
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default TaskDetail;
+9. Компонент Footer (components/Footer/Footer.jsx)
+javascript
+import React from 'react';
+import styles from './Footer.module.css';
+import { COLUMNS } from '../../utils/constants';
+
+const Footer = ({ data }) => {
+  const activeTasks = data.find(col => col.id === COLUMNS.BACKLOG)?.issues.length || 0;
+  const finishedTasks = data.find(col => col.id === COLUMNS.FINISHED)?.issues.length || 0;
+
+  return (
+    <footer className={styles.footer}>
+      <div className={styles.footerContent}>
+        <div className={styles.stats}>
+          <span>Active tasks: {activeTasks}</span>
+          <span>Finished tasks: {finishedTasks}</span>
+        </div>
+        <div className={styles.copyright}>
+          Kanban board by Your Name, {new Date().getFullYear()}
+        </div>
+      </div>
+    </footer>
+  );
+};
+
+export default Footer;
+10. Компонент Header с UserMenu (components/Header/Header.jsx)
+javascript
+import React from 'react';
+import UserMenu from './UserMenu/UserMenu';
+import styles from './Header.module.css';
+
+const Header = () => {
+  return (
+    <header className={styles.header}>
+      <div className={styles.headerContent}>
+        <h1 className={styles.logo}>Kanban Board</h1>
+        <UserMenu />
+      </div>
+    </header>
+  );
+};
+
+export default Header;
+11. UserMenu (components/Header/UserMenu/UserMenu.jsx)
+javascript
+import React, { useState } from 'react';
+import styles from './UserMenu.module.css';
+
+const UserMenu = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const menuItems = ['Profile', 'Settings', 'Logout'];
+
+  return (
+    <div className={styles.userMenu}>
+      <button 
+        className={styles.userButton}
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <img 
+          src="/avatar.png" 
+          alt="User avatar" 
+          className={styles.avatar}
+        />
+        <span className={`${styles.arrow} ${isOpen ? styles.up : styles.down}`}>
+          ▼
+        </span>
+      </button>
+      
+      {isOpen && (
+        <ul className={styles.menuList}>
+          {menuItems.map(item => (
+            <li key={item} className={styles.menuItem}>
+              <button className={styles.menuButton}>
+                {item}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+};
+
+export default UserMenu;
+🎨 Стили (пример для Column.module.css)
+css
+.column {
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 16px;
+  min-height: 400px;
+}
+
+.title {
+  margin: 0 0 16px 0;
+  color: #333;
+  font-size: 18px;
+}
+
+.tasks {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
