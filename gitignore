@@ -1,1 +1,40 @@
-
+Структура проекта
+kanban-board/
+├── public/
+│   └── index.html
+├── src/
+│   ├── components/
+│   │   ├── Header/
+│   │   │   ├── Header.jsx
+│   │   │   ├── UserMenu/
+│   │   │   │   ├── UserMenu.jsx
+│   │   │   │   └── UserMenu.module.css
+│   │   │   └── Header.module.css
+│   │   ├── Footer/
+│   │   │   ├── Footer.jsx
+│   │   │   └── Footer.module.css
+│   │   ├── Board/
+│   │   │   ├── Board.jsx
+│   │   │   └── Board.module.css
+│   │   ├── Column/
+│   │   │   ├── Column.jsx
+│   │   │   └── Column.module.css
+│   │   ├── Task/
+│   │   │   ├── Task.jsx
+│   │   │   └── Task.module.css
+│   │   ├── AddTaskForm/
+│   │   │   ├── AddTaskForm.jsx
+│   │   │   └── AddTaskForm.module.css
+│   │   └── TaskDetail/
+│   │       ├── TaskDetail.jsx
+│   │       └── TaskDetail.module.css
+│   ├── hooks/
+│   │   ├── useLocalStorage.js
+│   │   └── useToggle.js
+│   ├── utils/
+│   │   └── constants.js
+│   ├── App.jsx
+│   ├── App.module.css
+│   └── index.js
+├── package.json
+└── README.md
