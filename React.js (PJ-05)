@@ -1,0 +1,71 @@
+Welcome to Node.js v20.19.4.
+Type ".help" for more information.
+> Структура проекта
+Структура проекта
+          ^^^^^^^
+
+Uncaught SyntaxError: Unexpected identifier 'проекта'
+> kanban-board/
+... ├── public/
+├── public/
+
+
+Uncaught SyntaxError: Invalid or unexpected token
+> │   └── index.html
+│   └── index.html
+
+
+Uncaught SyntaxError: Invalid or unexpected token
+> ├── src/
+├── src/
+
+
+Uncaught SyntaxError: Invalid or unexpected token
+> │   ├── components/
+│   ├── components/
+
+
+Uncaught SyntaxError: Invalid or unexpected token
+> │   │   ├── Header/
+│   │   ├── Header/
+
+
+Uncaught SyntaxError: Invalid or unexpected token
+> │   │   │   ├── Header.jsx
+│   │   │   ├── Header.jsx
+
+
+Uncaught SyntaxError: Invalid or unexpected token
+> │   │   │   ├── UserMenu/
+│   │   │   ├── UserMenu/
+
+
+Uncaught SyntaxError: Invalid or unexpected token
+> │   │   │   │   ├── UserMenu.jsx
+│   │   │   │   ├── UserMenu.jsx
+
+
+Uncaught SyntaxError: Invalid or unexpected token
+> │   │   │   │   └── UserMenu.module.css
+│   │   │   │   └── UserMenu.module.css
+
+
+Uncaught SyntaxError: Invalid or unexpected token
+> │   │   │   └── Header.module.css
+│   │   │   └── Header.module.css
+
+
+Uncaught SyntaxError: Invalid or unexpected token
+> │   │   ├── Footer/
+│   │   ├── Footer/
+
+
+Uncaught SyntaxError: Invalid or unexpected token
+> │   │   │   ├── Footer.jsx
+│   │   │   ├── Footer.jsx
+
+
+Uncaught SyntaxError: Invalid or unexpected token
+> │   │   │   └── Footer.module.css
+│   │   │   └── Footer.module.css
+> │   │   │   ├── UserMenu/.
