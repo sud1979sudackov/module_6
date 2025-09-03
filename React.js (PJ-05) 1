@@ -1,0 +1,1175 @@
+
+
+...         description: ''
+...       };
+...       onUpdate(column.id, [...column.issues, newTask]);
+...     }
+...     setIsAdding(false);
+...   };
+...
+...   const handleMoveTask = (taskId) => {
+...     if (!sourceColumn) return;
+...
+...     const sourceCol = allColumns.find(col => col.id === sourceColumn);
+...     const task = sourceCol.issues.find(issue => issue.id === taskId);
+...
+...     if (task) {
+...       // Remove from source
+...       onUpdate(sourceColumn, sourceCol.issues.filter(issue => issue.id !== taskId));
+...       // Add to current
+...       onUpdate(column.id, [...column.issues, task]);
+...     }
+...   };
+...
+...   const isAddButtonDisabled = column.id !== COLUMNS.BACKLOG && sourceIssues.length === 0;
+...
+...   return (
+...     <div className={styles.column}>
+    <div className={styles.column}>
+    ^ght SyntaxError: Unexpected token 'export'
+> 6. Компонент Task (components/Task/Task.jsx)
+Uncaught SyntaxError: Unexpected token '<'x)
+>       <h3 className={styles.title}>{column.title}</h3>
+      <h3 className={styles.title}>{column.title}</h3>
+      ^t SyntaxError: Unexpected identifier 'Компонент'
+> javascript
+Uncaught SyntaxError: Unexpected token '<' defined
+>
+undefinedact from 'react';
+>       <div className={styles.tasks}>
+      <div className={styles.tasks}>
+      ^t:
+SyntaxError: Cannot use import statement inside the Node.js REPL, alternatively use dynamic import: const { default: ReaUncaught SyntaxError: Unexpected token '<'
+>         {column.issues.map(task => (
+...           <Task key={task.id} task={task} />
+({column.issues.map(task => (
+        ^
+Uncaught:
+Uncaught SyntaxError: Unexpected token '.'nside the Node.js REPL, alternatively use dynamic import: const { Link } = awa>         ))}
+        ))}yles from './Task.module.css';
+        ^yles from './Task.module.css';
+^^^^^^
+Uncaught SyntaxError: Unexpected token ')'
+>       </div>
+      </div> Cannot use import statement inside the Node.js REPL, alternatively use dynamic import: const { default: sty      ^ await import("./Task.module.css");
+>
+Uncaught SyntaxError: Unexpected token '<'
+>
+>       <AddTaskForm
+      <AddTaskFormsks/${task.id}`} className={styles.taskLink}>
+      ^
+
+Uncaught SyntaxError: Unexpected token '<'
+>         columnId={column.id}
+        columnId={column.id}.task}>
+                        ^
+
+Uncaught SyntaxError: Unexpected token '.'
+>         isAdding={isAdding}
+Uncaught ReferenceError: isAdding is not definedame}</h4>
+>         isDisabled={isAddButtonDisabled}
+Uncaught ReferenceError: isAddButtonDisabled is not defined
+>         sourceIssues={sourceIssues}
+Uncaught ReferenceError: sourceIssues is not defined
+>         onAdd={handleAddTask}
+Uncaught ReferenceError: handleAddTask is not defined
+>         onMove={handleMoveTask}
+Uncaught ReferenceError: handleMoveTask is not defined
+>         onToggle={() => setIsAdding(!isAdding)}
+        onToggle={() => setIsAdding(!isAdding)}
+                  ^
+        ^
+Uncaught SyntaxError: Unexpected token '('
+>       />
+      /></div>
+      ^/div>
+      ^
+Uncaught SyntaxError: Invalid regular expression: missing /
+>     </div>
+    </div>nk>
+    ^/Link>
+    ^
+Uncaught SyntaxError: Unexpected token '<'
+>   );
+  ););
+  ^;
+  ^
+Uncaught SyntaxError: Unexpected token ')'
+> };
+};};
+^;
+^
+Uncaught SyntaxError: Unexpected token '}'
+>
+> export default Column;
+export default Column;
+^^^^^^ default Task;
+^^^^^^
+Uncaught SyntaxError: Unexpected token 'export'
+> 6. Компонент Task (components/Task/Task.jsx)
+6. Компонент Task (components/Task/Task.jsx)skForm/AddTaskForm.jsx)
+   ^^^^^^^^^ AddTaskForm (components/AddTaskForm/AddTaskForm.jsx)
+   ^^^^^^^^^
+Uncaught SyntaxError: Unexpected identifier 'Компонент'
+> javascript
+Uncaught ReferenceError: javascript is not defined
+> import React from 'react';
+import React from 'react'; } from 'react';
+^^^^^^ React, { useState } from 'react';
+^^^^^^
+Uncaught:
+SyntaxError: Cannot use import statement inside the Node.js REPL, alternatively use dynamic import: const { default: React } = await import("react");t statement inside the Node.js REPL, alternatively use dynamic import: const { default: Rea> import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';le.css';
+^^^^^^ styles from './AddTaskForm.module.css';
+^^^^^^
+Uncaught:
+SyntaxError: Cannot use import statement inside the Node.js REPL, alternatively use dynamic import: const { Link } = await import("react-router-dom"); statement inside the Node.js REPL, alternatively use dynamic import: const { default: sty> import styles from './Task.module.css';
+import styles from './Task.module.css';constants';
+^^^^^^ { COLUMNS } from '../../utils/constants';
+^^^^^^
+Uncaught:
+SyntaxError: Cannot use import statement inside the Node.js REPL, alternatively use dynamic import: const { default: styles } = await import("./Task.module.css");nside the Node.js REPL, alternatively use dynamic import: const { COLUMNS } =
+>
+> const Task = ({ task }) => {
+...   return (
+...     <Link to={`/tasks/${task.id}`} className={styles.taskLink}>
+    <Link to={`/tasks/${task.id}`} className={styles.taskLink}>
+    ^
+...   const handleSubmit = (e) => {
+Uncaught SyntaxError: Unexpected token '<'
+>       <div className={styles.task}>
+      <div className={styles.task}>CKLOG) {
+      ^   if (inputValue.trim()) {
+...         onAdd(inputValue.trim());
+Uncaught SyntaxError: Unexpected token '<'
+>         <h4 className={styles.taskTitle}>{task.name}</h4>
+        <h4 className={styles.taskTitle}>{task.name}</h4>
+        ^ if (selectedTask) {
+...         onMove(selectedTask);
+Uncaught SyntaxError: Unexpected token '<'
+>         {task.description && (
+...           <p className={styles.taskDescription}>{task.description}</p>
+({task.description && (
+      ^
+...   if (columnId === COLUMNS.BACKLOG) {
+Uncaught SyntaxError: Unexpected token '.'
+>         )}
+        )} className={styles.addForm}>
+        ^
+
+Uncaught SyntaxError: Unexpected token ')'
+>       </div>
+      </div>  <form onSubmit={handleSubmit} className={styles.form}>
+      ^ing ? (
+           ^
+Uncaught SyntaxError: Unexpected token '<'
+>     </Link>
+    </Link>   <input
+    ^       <input
+            ^
+Uncaught SyntaxError: Unexpected token '<'
+>   );
+  );            type="text"
+  ^xt'
+>               value={inputValue}
+Uncaught SyntaxError: Unexpected token ')' defined
+> };
+};            onChange={(e) => setInputValue(e.target.value)}
+^                       ^
+
+Uncaught SyntaxError: Unexpected token '}'
+>
+> export default Task;
+export default Task;sName={styles.input}
+^^^^^^        className={styles.input}
+                               ^
+Uncaught SyntaxError: Unexpected token 'export'
+> 7. Компонент AddTaskForm (components/AddTaskForm/AddTaskForm.jsx)
+7. Компонент AddTaskForm (components/AddTaskForm/AddTaskForm.jsx)
+   ^^^^^^^^^erenceError: autoFocus is not defined
+>             />
+Uncaught SyntaxError: Unexpected identifier 'Компонент'
+> javascript
+Uncaught ReferenceError: javascript is not defined
+> import React, { useState } from 'react';
+import React, { useState } from 'react';sName={styles.submitButton}>
+^^^^^^      <button type="submit" className={styles.submitButton}>
+            ^
+Uncaught:
+SyntaxError: Cannot use import statement inside the Node.js REPL, alternatively use dynamic import: const { default: React, useState } = await import("react");
+> import styles from './AddTaskForm.module.css';
+import styles from './AddTaskForm.module.css';
+^^^^^^      </button>
+            ^
+Uncaught:
+SyntaxError: Cannot use import statement inside the Node.js REPL, alternatively use dynamic import: const { default: styles } = await import("./AddTaskForm.module.css");
+> import { COLUMNS } from '../../utils/constants';
+import { COLUMNS } from '../../utils/constants';
+^^^^^^
+Uncaught SyntaxError: Unexpected token '<'
+Uncaught: ) : (
+SyntaxError: Cannot use import statement inside the Node.js REPL, alternatively use dynamic import: const { COLUMNS } = await import("../../utils/constants");
+>
+> const AddTaskForm = ({ columnId, isAdding, isDisabled, sourceIssues, onAdd, onMove, onToggle }) => {
+...   const [inputValue, setInputValue] = useState('');
+...   const [selectedTask, setSelectedTask] = useState('');
+...
+...   const handleSubmit = (e) => {
+...     e.preventDefault();
+...
+...     if (columnId === COLUMNS.BACKLOG) {
+...       if (inputValue.trim()) {
+...         onAdd(inputValue.trim());
+...         setInputValue('');
+...       }
+...     } else {
+...       if (selectedTask) {
+...         onMove(selectedTask);
+...         setSelectedTask('');
+...       }
+...     }
+...   };
+...
+...   if (columnId === COLUMNS.BACKLOG) {
+...     return (
+...       <div className={styles.addForm}>
+      <div className={styles.addForm}>
+      ^t SyntaxError: Unexpected identifier 'card'
+>           </button>
+Uncaught SyntaxError: Unexpected token '<'
+>         {isAdding ? (
+...           <form onSubmit={handleSubmit} className={styles.form}>
+({isAdding ? (xError: Unexpected token '<'
+           ^
+        )}
+Uncaught SyntaxError: Unexpected token '?'
+>             <input
+            <inputor: Unexpected token ')'
+            ^>
+      </div>
+Uncaught SyntaxError: Unexpected token '<'
+>               type="text"
+'text'ht SyntaxError: Unexpected token '<'
+>               value={inputValue}
+Uncaught ReferenceError: inputValue is not defined
+>               onChange={(e) => setInputValue(e.target.value)}
+              onChange={(e) => setInputValue(e.target.value)}
+                        ^xpected token ')'
+>   }
+Uncaught SyntaxError: Unexpected token '('
+>               placeholder="Enter task name"
+'Enter task name'
+>               className={styles.input}
+              className={styles.input}
+                               ^
+  return (
+Uncaught SyntaxError: Unexpected token '.'
+>               autoFocus
+Uncaught ReferenceError: autoFocus is not defined
+>             />
+            />Name={styles.addForm}>
+            ^
+
+Uncaught SyntaxError: Invalid regular expression: missing /
+>             <button type="submit" className={styles.submitButton}>
+            <button type="submit" className={styles.submitButton}>
+            ^(
+           ^
+Uncaught SyntaxError: Unexpected token '<'
+>               Submit
+Uncaught ReferenceError: Submit is not defined
+>             </button>
+            </button>
+            ^
+Uncaught SyntaxError: Unexpected token '<'
+Uncaught SyntaxError: Unexpected token '<'
+>           </form>
+          </form>hange={(e) => setSelectedTask(e.target.value)}
+          ^ onChange={(e) => setSelectedTask(e.target.value)}
+                      ^
+Uncaught SyntaxError: Unexpected token '<'
+>         ) : (
+        ) : ( className={styles.select}
+        ^   className={styles.select}
+                             ^
+Uncaught SyntaxError: Unexpected token ')'
+>           <button
+          <button
+          ^
+          ^
+Uncaught SyntaxError: Unexpected token '<'
+>             onClick={onToggle}
+Uncaught ReferenceError: onToggle is not definedtion>
+>             disabled={isDisabled}
+Uncaught ReferenceError: isDisabled is not defined
+>             className={`${styles.addButton} ${isDisabled ? styles.disabled : ''}`}
+            className={`${styles.addButton} ${isDisabled ? styles.disabled : ''}`}
+                       ^^^s.map(task => (
+...               <option key={task.id} value={task.id}>
+Uncaught SyntaxError: Unexpected template string
+>           >
+          >
+          ^ntaxError: Unexpected token '.'
+>                 {task.name}
+Uncaught SyntaxError: Unexpected token '>'ed
+>             + Add card
+            + Add card>
+                  ^^^^
+
+Uncaught SyntaxError: Unexpected identifier 'card'
+>           </button>
+          </button>
+          ^ ^
+
+Uncaught SyntaxError: Unexpected token '<'
+>         )}
+        )}</select>
+        ^ ^
+
+Uncaught SyntaxError: Unexpected token ')'
+>       </div>
+      </div>utton
+      ^   ^
+
+Uncaught SyntaxError: Unexpected token '<'
+>     );
+    );t'
+    ^         disabled={!selectedTask}
+            disabled={!selectedTask}
+Uncaught SyntaxError: Unexpected token ')'
+>   }
+  }aught SyntaxError: Unexpected token '!'
+  ^           className={styles.submitButton}
+            className={styles.submitButton}
+Uncaught SyntaxError: Unexpected token '}'
+>
+>   return (
+  return (  >
+  ^^^^^^  >
+          ^
+Uncaught SyntaxError: Illegal return statement
+>     <div className={styles.addForm}>
+    <div className={styles.addForm}>
+    ^ght ReferenceError: Submit is not defined
+>           </button>
+Uncaught SyntaxError: Unexpected token '<'
+>       {isAdding ? (
+...         <form onSubmit={handleSubmit} className={styles.form}>
+({isAdding ? (xError: Unexpected token '<'
+           ^form>
+        </form>
+Uncaught SyntaxError: Unexpected token '?'
+>           <select
+          <selectror: Unexpected token '<'
+          ^ (
+      ) : (
+Uncaught SyntaxError: Unexpected token '<'
+>             value={selectedTask}
+Uncaught ReferenceError: selectedTask is not defined
+>             onChange={(e) => setSelectedTask(e.target.value)}
+            onChange={(e) => setSelectedTask(e.target.value)}
+                      ^
+
+Uncaught SyntaxError: Unexpected token '('
+>             className={styles.select}
+            className={styles.select}not defined
+                             ^ed}
+Uncaught ReferenceError: isDisabled is not defined
+Uncaught SyntaxError: Unexpected token '.'} ${isDisabled ? styles.disabled : ''}`}
+>           >
+          >          ^^^
+          ^
+Uncaught SyntaxError: Unexpected template string
+Uncaught SyntaxError: Unexpected token '>'
+>             <option value="">Select a task</option>
+            <option value="">Select a task</option>
+            ^
+Uncaught SyntaxError: Unexpected token '>'
+Uncaught SyntaxError: Unexpected token '<'
+>             {sourceIssues.map(task => (
+...               <option key={task.id} value={task.id}>
+({sourceIssues.map(task => (
+              ^Error: Unexpected identifier 'card'
+>         </button>
+Uncaught SyntaxError: Unexpected token '.'
+>                 {task.name}
+Uncaught ReferenceError: task is not defined
+>               </option>
+              </option>
+              ^
+      ^
+Uncaught SyntaxError: Unexpected token '<'
+>             ))}
+            ))}
+            ^
+    ^
+Uncaught SyntaxError: Unexpected token ')'
+>           </select>
+          </select>
+          ^
+  ^
+Uncaught SyntaxError: Unexpected token '<'
+>           <button
+          <button
+          ^
+^
+Uncaught SyntaxError: Unexpected token '<'
+>             type="submit"
+'submit'
+>             disabled={!selectedTask}
+            disabled={!selectedTask}
+                      ^
+
+Uncaught SyntaxError: Unexpected token '!'port'
+>             className={styles.submitButton}
+            className={styles.submitButton}ail/TaskDetail.jsx)
+                             ^
+
+Uncaught SyntaxError: Unexpected token '.'r 'Компонент'
+>           >
+          >ferenceError: javascript is not defined
+          ^act, { useState } from 'react';
+import React, { useState } from 'react';
+Uncaught SyntaxError: Unexpected token '>'
+>             Submit
+Uncaught ReferenceError: Submit is not defined
+>           </button>
+          </button>ait import("react");
+          ^useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+Uncaught SyntaxError: Unexpected token '<'
+>         </form>
+        </form>
+        ^or: Cannot use import statement inside the Node.js REPL, alternatively use dynamic import: const { useParams, useNavigate } = await import("react-router-dom");
+Uncaught SyntaxError: Unexpected token '<'css';
+>       ) : (
+      ) : (
+      ^
+Uncaught:
+Uncaught SyntaxError: Unexpected token ')'nside the Node.js REPL, alternatively use dynamic import: const { default: sty>         <button
+        <button
+        ^askDetail = ({ data, setData }) => {
+...   const { taskId } = useParams();
+Uncaught SyntaxError: Unexpected token '<'
+>           onClick={onToggle}
+Uncaught ReferenceError: onToggle is not defineds).find(issue => issue.id === taskId);
+>           disabled={isDisabled}
+Uncaught ReferenceError: isDisabled is not definedte(task?.description || '');
+>           className={`${styles.addButton} ${isDisabled ? styles.disabled : ''}`}
+          className={`${styles.addButton} ${isDisabled ? styles.disabled : ''}`}
+                     ^^^ not found</div>;
+    return <div>Task not found</div>;
+Uncaught SyntaxError: Unexpected template string
+>         >
+        >SyntaxError: Unexpected token '<'
+        ^
+  }
+Uncaught SyntaxError: Unexpected token '>'
+>           + Add card
+          + Add card: Unexpected token '}'
+                ^^^^
+>   const handleSaveDescription = () => {
+Uncaught SyntaxError: Unexpected identifier 'card'
+>         </button>
+        </button> column.issues.map(issue =>
+        ^   issue.id === taskId ? { ...issue, description } : issue
+...       )
+Uncaught SyntaxError: Unexpected token '<'
+>       )}
+      )}
+      ^ed
+>
+Uncaught SyntaxError: Unexpected token ')'
+>     </div>
+    </div>
+    ^
+Uncaught SyntaxError: Illegal return statement
+Uncaught SyntaxError: Unexpected token '<'
+>   );
+  );^
+  ^
+Uncaught SyntaxError: Unexpected token '<'
+Uncaught SyntaxError: Unexpected token ')'')} className={styles.closeButton}>
+> };
+};    ^
+^
+Uncaught SyntaxError: Unexpected token '<'
+Uncaught SyntaxError: Unexpected token '}'
+>
+> export default AddTaskForm;
+export default AddTaskForm;
+^^^^^^ht SyntaxError: Invalid or unexpected token
+>       </button>
+Uncaught SyntaxError: Unexpected token 'export'
+> 8. Компонент TaskDetail (components/TaskDetail/TaskDetail.jsx)
+8. Компонент TaskDetail (components/TaskDetail/TaskDetail.jsx)
+   ^^^^^^^^^taxError: Unexpected token '<'
+>
+Uncaught SyntaxError: Unexpected identifier 'Компонент'
+> javascript
+Uncaught ReferenceError: javascript is not defined>
+> import React, { useState } from 'react';
+import React, { useState } from 'react';
+^^^^^^ht SyntaxError: Unexpected token '<'
+>
+Uncaught:
+SyntaxError: Cannot use import statement inside the Node.js REPL, alternatively use dynamic import: const { default: React, useState } = await import("react");nSection}>
+> import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+^^^^^^ht SyntaxError: Unexpected token '<'
+>         <h3>Description</h3>
+Uncaught:h3>Description</h3>
+SyntaxError: Cannot use import statement inside the Node.js REPL, alternatively use dynamic import: const { useParams, useNavigate } = await import("react-router-dom");
+> import styles from './TaskDetail.module.css';
+import styles from './TaskDetail.module.css';
+^^^^^^        <div className={styles.editMode}>
+({isEditing ? (
+Uncaught:   ^
+SyntaxError: Cannot use import statement inside the Node.js REPL, alternatively use dynamic import: const { default: styles } = await import("./TaskDetail.module.css");
+>
+> const TaskDetail = ({ data, setData }) => {
+...   const { taskId } = useParams();
+...   const navigate = useNavigate();
+...
+...   const task = data.flatMap(col => col.issues).find(issue => issue.id === taskId);
+...   const [isEditing, setIsEditing] = useState(false);
+...   const [description, setDescription] = useState(task?.description || '');
+...
+...   if (!task) {
+...     return <div>Task not found</div>;
+    return <div>Task not found</div>;n '('
+           ^    className={styles.textarea}
+              className={styles.textarea}
+Uncaught SyntaxError: Unexpected token '<'
+>   }
+  }aught SyntaxError: Unexpected token '.'
+  ^             rows={4}
+              rows={4}
+Uncaught SyntaxError: Unexpected token '}'
+>
+>   const handleSaveDescription = () => {
+...     setData(prev => prev.map(column => ({
+...       ...column,
+...       issues: column.issues.map(issue =>
+...         issue.id === taskId ? { ...issue, description } : issue
+...       )
+...     })));
+...     setIsEditing(false);
+...   };
+Uncaught SyntaxError: Identifier 'handleSaveDescription' has already been declared
+>
+>   return (
+  return (eferenceError: Save is not defined
+  ^^^^^^      </button>
+            </button>
+Uncaught SyntaxError: Illegal return statement
+>     <div className={styles.taskDetail}>
+    <div className={styles.taskDetail}>'<'
+    ^       </div>
+          </div>
+Uncaught SyntaxError: Unexpected token '<'
+>       <button onClick={() => navigate('/')} className={styles.closeButton}>
+      <button onClick={() => navigate('/')} className={styles.closeButton}>
+      ^   ) : (
+        ) : (
+Uncaught SyntaxError: Unexpected token '<'
+>         ×
+        ×SyntaxError: Unexpected token ')'
+            <div className={styles.viewMode}>
+          <div className={styles.viewMode}>
+Uncaught SyntaxError: Invalid or unexpected token
+>       </button>
+      </button>Error: Unexpected token '<'
+      ^       <p className={styles.description}>
+            <p className={styles.description}>
+Uncaught SyntaxError: Unexpected token '<'
+>
+undefinedSyntaxError: Unexpected token '<'
+>       <h1 className={styles.title}>{task.name}</h1>
+      <h1 className={styles.title}>{task.name}</h1>
+      ^       </p>
+            </p>
+Uncaught SyntaxError: Unexpected token '<'
+>
+undefinedSyntaxError: Unexpected token '<'
+>       <div className={styles.descriptionSection}>
+      <div className={styles.descriptionSection}>
+      ^     ^
+
+Uncaught SyntaxError: Unexpected token '<'
+>         <h3>Description</h3>
+        <h3>Description</h3> setIsEditing(true)}
+        ^              ^
+
+Uncaught SyntaxError: Unexpected token '<'
+>         {isEditing ? (
+...           <div className={styles.editMode}>
+({isEditing ? (                ^
+            ^
+Uncaught SyntaxError: Unexpected token '.'
+Uncaught SyntaxError: Unexpected token '?'
+>             <textarea
+            <textarea
+            ^
+Uncaught SyntaxError: Unexpected token '>'
+Uncaught SyntaxError: Unexpected token '<'
+>               value={description}
+Uncaught ReferenceError: description is not defined
+>               onChange={(e) => setDescription(e.target.value)}
+              onChange={(e) => setDescription(e.target.value)}
+                        ^
+Uncaught SyntaxError: Unexpected token '<'
+Uncaught SyntaxError: Unexpected token '('
+>               className={styles.textarea}
+              className={styles.textarea}
+                               ^
+Uncaught SyntaxError: Unexpected token '<'
+Uncaught SyntaxError: Unexpected token '.'
+>               rows={4}
+              rows={4}
+                    ^
+Uncaught SyntaxError: Unexpected token ')'
+Uncaught SyntaxError: Unexpected number
+>             />
+            />
+            ^
+Uncaught SyntaxError: Unexpected token '<'
+Uncaught SyntaxError: Invalid regular expression: missing /
+>             <button onClick={handleSaveDescription} className={styles.saveButton}>
+            <button onClick={handleSaveDescription} className={styles.saveButton}>
+            ^
+Uncaught SyntaxError: Unexpected token '<'
+Uncaught SyntaxError: Unexpected token '<'
+>               Save
+Uncaught ReferenceError: Save is not defined
+>             </button>
+            </button> Unexpected token ')'
+            ^
+};
+Uncaught SyntaxError: Unexpected token '<'
+>           </div>
+          </div>rror: Unexpected token '}'
+          ^
+> export default TaskDetail;
+Uncaught SyntaxError: Unexpected token '<'
+>         ) : (
+        ) : (
+        ^SyntaxError: Unexpected token 'export'
+> 9. Компонент Footer (components/Footer/Footer.jsx)
+Uncaught SyntaxError: Unexpected token ')'ter.jsx)
+>           <div className={styles.viewMode}>
+          <div className={styles.viewMode}>
+          ^ntaxError: Unexpected identifier 'Компонент'
+> javascript
+Uncaught SyntaxError: Unexpected token '<' defined
+>             <p className={styles.description}>
+            <p className={styles.description}>
+            ^
+
+Uncaught SyntaxError: Unexpected token '<'
+>               {description || 'This task has no description'}
+Uncaught ReferenceError: description is not defined
+>             </p>
+            </p>om './Footer.module.css';
+            ^
+
+Uncaught SyntaxError: Unexpected token '<'
+>             <button
+            <button ("./Footer.module.css");
+            ^LUMNS } from '../../utils/constants';
+import { COLUMNS } from '../../utils/constants';
+Uncaught SyntaxError: Unexpected token '<'
+>               onClick={() => setIsEditing(true)}
+              onClick={() => setIsEditing(true)}
+                       ^import statement inside the Node.js REPL, alternatively use dynamic import: const { COLUMNS } =
+await import("../../utils/constants");
+Uncaught SyntaxError: Unexpected token '('
+>               className={styles.editButton}
+              className={styles.editButton}col.id === COLUMNS.BACKLOG)?.issues.length || 0;
+                               ^.find(col => col.id === COLUMNS.FINISHED)?.issues.length || 0;
+...
+Uncaught SyntaxError: Unexpected token '.'
+>             >
+            >lassName={styles.footer}>
+            ^
+
+Uncaught SyntaxError: Unexpected token '>'
+>               Edit
+Uncaught ReferenceError: Edit is not defined
+>             </button>
+            </button>
+            ^axError: Unexpected token '<'
+>         <div className={styles.stats}>
+Uncaught SyntaxError: Unexpected token '<'
+>           </div>
+          </div>
+          ^ntaxError: Unexpected token '<'
+>           <span>Active tasks: {activeTasks}</span>
+Uncaught SyntaxError: Unexpected token '<'}</span>
+>         )}
+        )}
+        ^SyntaxError: Unexpected token '<'
+>           <span>Finished tasks: {finishedTasks}</span>
+Uncaught SyntaxError: Unexpected token ')'asks}</span>
+>       </div>
+      </div>
+      ^t SyntaxError: Unexpected token '<'
+>         </div>
+Uncaught SyntaxError: Unexpected token '<'
+>     </div>
+    </div>
+    ^ght SyntaxError: Unexpected token '<'
+>         <div className={styles.copyright}>
+Uncaught SyntaxError: Unexpected token '<'
+>   );
+  );
+  ^aught SyntaxError: Unexpected token '<'
+>           Kanban board by Your Name, {new Date().getFullYear()}
+Uncaught SyntaxError: Unexpected token ')'Date().getFullYear()}
+> };
+};
+^ncaught SyntaxError: Unexpected identifier 'board'
+>         </div>
+Uncaught SyntaxError: Unexpected token '}'
+>
+> export default TaskDetail;
+export default TaskDetail;pected token '<'
+^^^^^^  </div>
+      </div>
+Uncaught SyntaxError: Unexpected token 'export'
+> 9. Компонент Footer (components/Footer/Footer.jsx)
+9. Компонент Footer (components/Footer/Footer.jsx)
+   ^^^^^^^^^er>
+    </footer>
+Uncaught SyntaxError: Unexpected identifier 'Компонент'
+> javascript
+Uncaught ReferenceError: javascript is not defined
+> import React from 'react';
+import React from 'react';
+^^^^^^
+
+Uncaught:SyntaxError: Unexpected token ')'
+SyntaxError: Cannot use import statement inside the Node.js REPL, alternatively use dynamic import: const { default: React } = await import("react");
+> import styles from './Footer.module.css';
+import styles from './Footer.module.css';
+^^^^^^ht SyntaxError: Unexpected token '}'
+>
+Uncaught:default Footer;
+SyntaxError: Cannot use import statement inside the Node.js REPL, alternatively use dynamic import: const { default: styles } = await import("./Footer.module.css");
+> import { COLUMNS } from '../../utils/constants';
+import { COLUMNS } from '../../utils/constants';
+^^^^^^Компонент Header с UserMenu (components/Header/Header.jsx)
+10. Компонент Header с UserMenu (components/Header/Header.jsx)
+Uncaught:^^^^
+SyntaxError: Cannot use import statement inside the Node.js REPL, alternatively use dynamic import: const { COLUMNS } = await import("../../utils/constants");ifier 'Компонент'
+>
+> const Footer = ({ data }) => {
+...   const activeTasks = data.find(col => col.id === COLUMNS.BACKLOG)?.issues.length || 0;
+...   const finishedTasks = data.find(col => col.id === COLUMNS.FINISHED)?.issues.length || 0;
+...
+...   return (
+...     <footer className={styles.footer}>
+    <footer className={styles.footer}>nt inside the Node.js REPL, alternatively use dynamic import: const { default: Rea    ^= await import("react");
+> import UserMenu from './UserMenu/UserMenu';
+Uncaught SyntaxError: Unexpected token '<';
+>       <div className={styles.footerContent}>
+      <div className={styles.footerContent}>
+      ^t:
+SyntaxError: Cannot use import statement inside the Node.js REPL, alternatively use dynamic import: const { default: UseUncaught SyntaxError: Unexpected token '<'u");
+>         <div className={styles.stats}>
+        <div className={styles.stats}>s';
+        ^
+
+Uncaught SyntaxError: Unexpected token '<'
+>           <span>Active tasks: {activeTasks}</span>
+          <span>Active tasks: {activeTasks}</span>
+          ^
+> const Header = () => {
+Uncaught SyntaxError: Unexpected token '<'
+>           <span>Finished tasks: {finishedTasks}</span>
+          <span>Finished tasks: {finishedTasks}</span>
+          ^
+
+Uncaught SyntaxError: Unexpected token '<'
+>         </div>
+        </div>ssName={styles.headerContent}>
+        ^
+
+Uncaught SyntaxError: Unexpected token '<'
+>         <div className={styles.copyright}>
+        <div className={styles.copyright}> Board</h1>
+        ^
+
+Uncaught SyntaxError: Unexpected token '<'
+>           Kanban board by Your Name, {new Date().getFullYear()}
+          Kanban board by Your Name, {new Date().getFullYear()}
+                 ^^^^^
+
+Uncaught SyntaxError: Unexpected identifier 'board'
+>         </div>
+        </div>
+        ^
+
+Uncaught SyntaxError: Unexpected token '<'
+>       </div>
+      </div>>
+      ^
+
+Uncaught SyntaxError: Unexpected token '<'
+>     </footer>
+    </footer>
+    ^
+
+Uncaught SyntaxError: Unexpected token '<'
+>   );
+  );
+  ^
+
+Uncaught SyntaxError: Unexpected token ')'
+> };
+};export default Header;
+^xport default Header;
+^^^^^^
+Uncaught SyntaxError: Unexpected token '}'
+>
+> export default Footer;
+export default Footer;ts/Header/UserMenu/UserMenu.jsx)
+^^^^^^^^^^^^
+
+Uncaught SyntaxError: Unexpected token 'export'erMenu'
+> 10. Компонент Header с UserMenu (components/Header/Header.jsx)
+10. Компонент Header с UserMenu (components/Header/Header.jsx)
+    ^^^^^^^^^t, { useState } from 'react';
+import React, { useState } from 'react';
+Uncaught SyntaxError: Unexpected identifier 'Компонент'
+> javascript
+Uncaught ReferenceError: javascript is not defined
+> import React from 'react';
+import React from 'react';ort("react");
+^^^^^^rt styles from './UserMenu.module.css';
+import styles from './UserMenu.module.css';
+Uncaught:
+SyntaxError: Cannot use import statement inside the Node.js REPL, alternatively use dynamic import: const { default: React } = await import("react");
+> import UserMenu from './UserMenu/UserMenu';
+import UserMenu from './UserMenu/UserMenu';");
+^^^^^^
+> const UserMenu = () => {
+Uncaught:st [isOpen, setIsOpen] = useState(false);
+SyntaxError: Cannot use import statement inside the Node.js REPL, alternatively use dynamic import: const { default: UserMenu } = await import("./UserMenu/UserMenu");, 'Logout'];
+> import styles from './Header.module.css';
+import styles from './Header.module.css';
+^^^^^^  <div className={styles.userMenu}>
+    <div className={styles.userMenu}>
+Uncaught:
+SyntaxError: Cannot use import statement inside the Node.js REPL, alternatively use dynamic import: const { default: styles } = await import("./Header.module.css");
+>
+> const Header = () => {
+...   return (
+...     <header className={styles.header}>
+    <header className={styles.header}> '<'
+    ^     className={styles.userButton}
+        className={styles.userButton}
+Uncaught SyntaxError: Unexpected token '<'
+>       <div className={styles.headerContent}>
+      <div className={styles.headerContent}>
+      ^   onClick={() => setIsOpen(!isOpen)}
+        onClick={() => setIsOpen(!isOpen)}
+Uncaught SyntaxError: Unexpected token '<'
+>         <h1 className={styles.logo}>Kanban Board</h1>
+        <h1 className={styles.logo}>Kanban Board</h1>
+        ^
+      >
+Uncaught SyntaxError: Unexpected token '<'
+>         <UserMenu />
+        <UserMenu />: Unexpected token '>'
+        ^ <img
+        <img
+Uncaught SyntaxError: Unexpected token '<'
+>       </div>
+      </div>taxError: Unexpected token '<'
+      ^     src="/avatar.png"
+'/avatar.png'
+Uncaught SyntaxError: Unexpected token '<'
+>     </header>
+    </header>lassName={styles.avatar}
+    ^     className={styles.avatar}
+                           ^
+Uncaught SyntaxError: Unexpected token '<'
+>   );
+  );      />
+  ^     />
+        ^
+Uncaught SyntaxError: Unexpected token ')'
+> };
+};        <span className={`${styles.arrow} ${isOpen ? styles.up : styles.down}`}>
+^       <span className={`${styles.arrow} ${isOpen ? styles.up : styles.down}`}>
+        ^
+Uncaught SyntaxError: Unexpected token '}'
+>
+> export default Header;
+export default Header;
+^^^^^^
+
+Uncaught SyntaxError: Unexpected token 'export'en
+> 11. UserMenu (components/Header/UserMenu/UserMenu.jsx)
+11. UserMenu (components/Header/UserMenu/UserMenu.jsx)
+    ^^^^^^^^
+
+Uncaught SyntaxError: Unexpected identifier 'UserMenu'
+> javascript
+Uncaught ReferenceError: javascript is not defined
+> import React, { useState } from 'react';
+import React, { useState } from 'react';
+^^^^^^ht SyntaxError: Unexpected token '<'
+>
+Uncaught:
+SyntaxError: Cannot use import statement inside the Node.js REPL, alternatively use dynamic import: const { default: React, useState } = await import("react");ist}>
+> import styles from './UserMenu.module.css';
+import styles from './UserMenu.module.css';
+^^^^^^
+Uncaught SyntaxError: Unexpected token '&&'
+Uncaught:   {menuItems.map(item => (
+SyntaxError: Cannot use import statement inside the Node.js REPL, alternatively use dynamic import: const { default: styles } = await import("./UserMenu.module.css");
+>
+> const UserMenu = () => {
+...   const [isOpen, setIsOpen] = useState(false);
+...
+...   const menuItems = ['Profile', 'Settings', 'Logout'];
+...
+...   return (
+...     <div className={styles.userMenu}>
+    <div className={styles.userMenu}>
+    ^ght ReferenceError: item is not defined
+>               </button>
+Uncaught SyntaxError: Unexpected token '<'
+>       <button
+      <button
+      ^t SyntaxError: Unexpected token '<'
+>             </li>
+Uncaught SyntaxError: Unexpected token '<'
+>         className={styles.userButton}
+        className={styles.userButton}
+                         ^pected token '<'
+>           ))}
+Uncaught SyntaxError: Unexpected token '.'
+>         onClick={() => setIsOpen(!isOpen)}
+        onClick={() => setIsOpen(!isOpen)}
+                 ^or: Unexpected token ')'
+>         </ul>
+Uncaught SyntaxError: Unexpected token '('
+>       >
+      >
+      ^t SyntaxError: Unexpected token '<'
+>       )}
+Uncaught SyntaxError: Unexpected token '>'
+>         <img
+        <img
+        ^SyntaxError: Unexpected token ')'
+>     </div>
+Uncaught SyntaxError: Unexpected token '<'
+>           src="/avatar.png"
+'/avatar.png'
+>           alt="User avatar"
+'User avatar'
+>           className={styles.avatar}
+          className={styles.avatar}
+                           ^
+Uncaught SyntaxError: Unexpected token ')'
+Uncaught SyntaxError: Unexpected token '.'
+>         />
+        />
+        ^
+Uncaught SyntaxError: Unexpected token '}'
+Uncaught SyntaxError: Invalid regular expression: missing /
+>         <span className={`${styles.arrow} ${isOpen ? styles.up : styles.down}`}>
+        <span className={`${styles.arrow} ${isOpen ? styles.up : styles.down}`}>
+        ^
+
+Uncaught SyntaxError: Unexpected token '<'port'
+>           ▼
+          ▼ример для Column.module.css)
+
+
+Uncaught SyntaxError: Invalid or unexpected token
+>         </span>
+        </span>nceError: css is not defined
+        ^ {
+Invalid REPL keyword
+Uncaught SyntaxError: Unexpected token '<'
+>       </button>
+      </button>
+      ^
+Uncaught SyntaxError: Private field '#f5f5f5' must be declared in an enclosing class
+Uncaught SyntaxError: Unexpected token '<'
+>
+undefined      ^
+>       {isOpen && (
+...         <ul className={styles.menuList}>
+({isOpen && (16px;
+         ^^16px;
+           ^^
+Uncaught SyntaxError: Unexpected token '&&'
+>           {menuItems.map(item => (
+...             <li key={item} className={styles.menuItem}>
+({menuItems.map(item => (
+           ^^
+
+Uncaught SyntaxError: Unexpected token '.'
+>               <button className={styles.menuButton}>
+              <button className={styles.menuButton}>
+              ^
+
+Uncaught SyntaxError: Unexpected token '<'
+>                 {item}
+Uncaught ReferenceError: item is not defined
+>               </button>
+              </button>
+              ^6px 0;
+            ^
+Uncaught SyntaxError: Unexpected token '<'
+>             </li>
+            </li>
+            ^;
+         ^
+Uncaught SyntaxError: Unexpected token '<'
+>           ))}
+          ))}: 18px;
+          ^: 18px;
+           ^
+Uncaught SyntaxError: Unexpected token ')'
+>         </ul>
+        </ul>
+        ^
+^
+Uncaught SyntaxError: Unexpected token '<'
+>       )}
+      )}
+      ^s {
+Invalid REPL keyword
+Uncaught SyntaxError: Unexpected token ')'
+>     </div>
+    </div>irection: column;
+    ^x-direction: column;
+                ^
+Uncaught SyntaxError: Unexpected token '<'
+>   );
+  );gap: 8px;
+  ^ap: 8px;
+       ^
+Uncaught SyntaxError: Unexpected token ')'
+> };
+};  margin-bottom: 16px;
+^ margin-bottom: 16px;
+               ^
+Uncaught SyntaxError: Unexpected token '}'
+>
+> export default UserMenu;
+export default UserMenu;
+^^^^^^
+
+Uncaught SyntaxError: Unexpected token 'export'
+> 🎨 Стили (пример для Column.module.css)
+🎨 Стили (пример для Column.module.css)
+^
+
+Uncaught SyntaxError: Invalid or unexpected token
+> css
+Uncaught ReferenceError: css is not defined
+> .column {
+Invalid REPL keyword
+>   background: #f5f5f5;
+  background: #f5f5f5;
+            ^
+
+Uncaught SyntaxError: Private field '#f5f5f5' must be declared in an enclosing class
+>   border-radius: 8px;
+  border-radius: 8px;
+               ^
+
+Uncaught SyntaxError: Unexpected token ':'
+>   padding: 16px;
+  padding: 16px;
+           ^^
+
+Uncaught SyntaxError: Invalid or unexpected token
+>   min-height: 400px;
+  min-height: 400px;
+            ^
+
+Uncaught SyntaxError: Unexpected token ':'
+> }
+}
+^
+
+Uncaught SyntaxError: Unexpected token '}'
+>
+> .title {
+Invalid REPL keyword
+>   margin: 0 0 16px 0;
+  margin: 0 0 16px 0;
+            ^
+
+Uncaught SyntaxError: Unexpected number
+>   color: #333;
+  color: #333;
+         ^
+
+Uncaught SyntaxError: Invalid or unexpected token
+>   font-size: 18px;
+  font-size: 18px;
+           ^
+
+Uncaught SyntaxError: Unexpected token ':'
+> }
+}
+^
+
+Uncaught SyntaxError: Unexpected token '}'
+>
+> .tasks {
+Invalid REPL keyword
+>   display: flex;
+Uncaught ReferenceError: flex is not defined
+>   flex-direction: column;
+  flex-direction: column;
+                ^
+
+Uncaught SyntaxError: Unexpected token ':'
+>   gap: 8px;
+  gap: 8px;
+       ^
+
+Uncaught SyntaxError: Invalid or unexpected token
+>   margin-bottom: 16px;
+  margin-bottom: 16px;
+               ^
+
+Uncaught SyntaxError: Unexpected token ':'
+> }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
