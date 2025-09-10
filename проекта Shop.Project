@@ -1,0 +1,530 @@
+-- Добавляем поле category_id для связи товаров с категориями
+ALTER TABLE Products ADD COLUMN category_id INT NULL;
+ALTER TABLE Products ADD CONSTRAINT FK_Products_Categories 
+FOREIGN KEY (category_id) REFERENCES Categories(id);
+
+-- Создаем таблицу похожих товаров
+CREATE TABLE SimilarProducts (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    product_id INT NOT NULL,
+    similar_product_id INT NOT NULL,
+    similarity_score DECIMAL(5,4) DEFAULT 1.0,
+    created_at DATETIME2 DEFAULT GETDATE(),
+    FOREIGN KEY (product_id) REFERENCES Products(id),
+    FOREIGN KEY (similar_product_id) REFERENCES Products(id),
+    CONSTRAINT CHK_DifferentProducts CHECK (product_id != similar_product_id)
+);
+1.2. Shop.API изменения
+SimilarProductsController.cs
+
+csharp
+[ApiController]
+[Route("api/[controller]")]
+public class SimilarProductsController : ControllerBase
+{
+    private readonly ISimilarProductService _similarProductService;
+
+    public SimilarProductsController(ISimilarProductService similarProductService)
+    {
+        _similarProductService = similarProductService;
+    }
+
+    [HttpGet("{productId}")]
+    public async Task<IActionResult> GetSimilarProducts(int productId, [FromQuery] int limit = 5)
+    {
+        var similarProducts = await _similarProductService.GetSimilarProductsAsync(productId, limit);
+        return Ok(similarProducts);
+    }
+
+    [HttpPost("generate")]
+    public async Task<IActionResult> GenerateSimilarProducts()
+    {
+        await _similarProductService.GenerateSimilarProductsAsync();
+        return Ok(new { message = "Similar products generated successfully" });
+    }
+}
+ISimilarProductService.cs
+
+csharp
+public interface ISimilarProductService
+{
+    Task<IEnumerable<ProductDto>> GetSimilarProductsAsync(int productId, int limit = 5);
+    Task GenerateSimilarProductsAsync();
+    Task CalculateSimilarityForProductAsync(int productId);
+}
+SimilarProductService.cs
+
+csharp
+public class SimilarProductService : ISimilarProductService
+{
+    private readonly IProductRepository _productRepository;
+    private readonly ISimilarProductRepository _similarProductRepository;
+
+    public SimilarProductService(IProductRepository productRepository, 
+                               ISimilarProductRepository similarProductRepository)
+    {
+        _productRepository = productRepository;
+        _similarProductRepository = similarProductRepository;
+    }
+
+    public async Task<IEnumerable<ProductDto>> GetSimilarProductsAsync(int productId, int limit = 5)
+    {
+        var similarProductIds = await _similarProductRepository
+            .GetSimilarProductIdsAsync(productId, limit);
+        
+        var products = await _productRepository.GetProductsByIdsAsync(similarProductIds);
+        return products.Select(p => MapToDto(p));
+    }
+
+    public async Task GenerateSimilarProductsAsync()
+    {
+        var allProducts = await _productRepository.GetAllProductsAsync();
+        
+        foreach (var product in allProducts)
+        {
+            await CalculateSimilarityForProductAsync(product.Id);
+        }
+    }
+
+    public async Task CalculateSimilarityForProductAsync(int productId)
+    {
+        var currentProduct = await _productRepository.GetProductByIdAsync(productId);
+        var otherProducts = await _productRepository.GetProductsByCategoryAsync(currentProduct.CategoryId);
+        
+        foreach (var otherProduct in otherProducts.Where(p => p.Id != productId))
+        {
+            var similarity = CalculateSimilarity(currentProduct, otherProduct);
+            
+            if (similarity > 0.3m) // Порог схожести
+            {
+                await _similarProductRepository.AddSimilarProductAsync(
+                    productId, otherProduct.Id, similarity);
+            }
+        }
+    }
+
+    private decimal CalculateSimilarity(Product product1, Product product2)
+    {
+        // Алгоритм вычисления схожести на основе:
+        // - категории
+        // - цены (диапазон)
+        // - характеристик
+        // - тегов
+        decimal score = 0m;
+        
+        if (product1.CategoryId == product2.CategoryId) score += 0.4m;
+        
+        // Сравнение цен в одном диапазоне
+        var priceRatio = Math.Min(product1.Price, product2.Price) / 
+                        Math.Max(product1.Price, product2.Price);
+        score += (decimal)priceRatio * 0.3m;
+        
+        // Дополнительная логика сравнения характеристик...
+        
+        return Math.Min(score, 1.0m);
+    }
+
+    private ProductDto MapToDto(Product product) => new()
+    {
+        Id = product.Id,
+        Name = product.Name,
+        Price = product.Price,
+        // ... другие поля
+    };
+}
+🎯 Задача 2: Функционал создания товара в админке
+2.1. Shop.API изменения
+ProductsController.cs (добавляем метод)
+
+csharp
+[HttpPost]
+[Authorize(Roles = "Admin")]
+public async Task<IActionResult> CreateProduct([FromBody] CreateProductRequest request)
+{
+    if (!ModelState.IsValid)
+        return BadRequest(ModelState);
+
+    try
+    {
+        var product = new Product
+        {
+            Name = request.Name,
+            Description = request.Description,
+            Price = request.Price,
+            CategoryId = request.CategoryId,
+            StockQuantity = request.StockQuantity,
+            IsActive = request.IsActive,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        await _productRepository.AddProductAsync(product);
+        
+        // Генерируем похожие товары для нового товара
+        await _similarProductService.CalculateSimilarityForProductAsync(product.Id);
+
+        return CreatedAtAction(nameof(GetProduct), 
+            new { id = product.Id }, 
+            MapToDto(product));
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, new { message = "Error creating product", error = ex.Message });
+    }
+}
+CreateProductRequest.cs
+
+csharp
+public class CreateProductRequest
+{
+    [Required]
+    [StringLength(100)]
+    public string Name { get; set; }
+
+    [StringLength(500)]
+    public string Description { get; set; }
+
+    [Range(0.01, double.MaxValue)]
+    public decimal Price { get; set; }
+
+    public int? CategoryId { get; set; }
+
+    [Range(0, int.MaxValue)]
+    public int StockQuantity { get; set; }
+
+    public bool IsActive { get; set; } = true;
+}
+2.2. Shop.Admin изменения
+CreateProduct.razor
+
+razor
+@page "/admin/products/create"
+@using Shop.Shared.Dtos
+@inject IProductService ProductService
+@inject NavigationManager NavigationManager
+
+<h3>Create New Product</h3>
+
+<EditForm Model="@Product" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="name">Product Name</label>
+        <InputText id="name" @bind-Value="@Product.Name" class="form-control" />
+        <ValidationMessage For="@(() => Product.Name)" />
+    </div>
+
+    <div class="form-group">
+        <label for="description">Description</label>
+        <InputTextArea id="description" @bind-Value="@Product.Description" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label for="price">Price</label>
+        <InputNumber id="price" @bind-Value="@Product.Price" class="form-control" />
+        <ValidationMessage For="@(() => Product.Price)" />
+    </div>
+
+    <div class="form-group">
+        <label for="category">Category</label>
+        <InputSelect id="category" @bind-Value="@Product.CategoryId" class="form-control">
+            <option value="">Select Category</option>
+            @foreach (var category in Categories)
+            {
+                <option value="@category.Id">@category.Name</option>
+            }
+        </InputSelect>
+    </div>
+
+    <div class="form-group">
+        <label for="stock">Stock Quantity</label>
+        <InputNumber id="stock" @bind-Value="@Product.StockQuantity" class="form-control" />
+    </div>
+
+    <div class="form-check">
+        <InputCheckbox id="active" @bind-Value="@Product.IsActive" class="form-check-input" />
+        <label for="active" class="form-check-label">Active</label>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create Product</button>
+    <button type="button" class="btn btn-secondary" @onclick="@Cancel">Cancel</button>
+</EditForm>
+
+@code {
+    private CreateProductRequest Product { get; set; } = new();
+    private List<CategoryDto> Categories { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Загрузка категорий для dropdown
+        Categories = await ProductService.GetCategoriesAsync();
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            var createdProduct = await ProductService.CreateProductAsync(Product);
+            NavigationManager.NavigateTo($"/admin/products/{createdProduct.Id}");
+        }
+        catch (Exception ex)
+        {
+            // Обработка ошибок
+            Console.WriteLine($"Error creating product: {ex.Message}");
+        }
+    }
+
+    private void Cancel()
+    {
+        NavigationManager.NavigateTo("/admin/products");
+    }
+}
+🎯 Задача 3: Shop.Client на React
+3.1. Структура проекта
+text
+Shop.Client/
+├── src/
+│   ├── components/
+│   │   ├── ProductList/
+│   │   ├── ProductCard/
+│   │   ├── SimilarProducts/
+│   │   ├── Header/
+│   │   └── Footer/
+│   ├── pages/
+│   │   ├── Home/
+│   │   ├── ProductDetail/
+│   │   ├── Category/
+│   │   └── Cart/
+│   ├── services/
+│   │   ├── api.js
+│   │   └── productService.js
+│   ├── store/
+│   │   ├── slices/
+│   │   │   ├── productsSlice.js
+│   │   │   └── cartSlice.js
+│   │   └── index.js
+│   ├── App.js
+│   └── index.js
+├── package.json
+└── vite.config.js
+3.2. Основные компоненты
+ProductCard.jsx
+
+jsx
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import './ProductCard.css';
+
+const ProductCard = ({ product }) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/product/${product.id}`);
+  };
+
+  return (
+    <div className="product-card" onClick={handleClick}>
+      <img src={product.imageUrl || '/placeholder-product.jpg'} alt={product.name} />
+      <h3>{product.name}</h3>
+      <p className="price">${product.price}</p>
+      <button className="add-to-cart-btn">Add to Cart</button>
+    </div>
+  );
+};
+
+export default ProductCard;
+SimilarProducts.jsx
+
+jsx
+import React, { useEffect, useState } from 'react';
+import { getSimilarProducts } from '../services/productService';
+import ProductCard from './ProductCard';
+import './SimilarProducts.css';
+
+const SimilarProducts = ({ productId }) => {
+  const [similarProducts, setSimilarProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchSimilarProducts = async () => {
+      try {
+        const products = await getSimilarProducts(productId);
+        setSimilarProducts(products);
+      } catch (error) {
+        console.error('Error fetching similar products:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (productId) {
+      fetchSimilarProducts();
+    }
+  }, [productId]);
+
+  if (loading) return <div>Loading similar products...</div>;
+  if (similarProducts.length === 0) return null;
+
+  return (
+    <div className="similar-products">
+      <h3>Similar Products</h3>
+      <div className="similar-products-grid">
+        {similarProducts.map(product => (
+          <ProductCard key={product.id} product={product} />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default SimilarProducts;
+ProductDetail.jsx
+
+jsx
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { getProductById } from '../services/productService';
+import SimilarProducts from '../components/SimilarProducts/SimilarProducts';
+import './ProductDetail.css';
+
+const ProductDetail = () => {
+  const { id } = useParams();
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const productData = await getProductById(id);
+        setProduct(productData);
+      } catch (error) {
+        console.error('Error fetching product:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProduct();
+  }, [id]);
+
+  if (loading) return <div>Loading...</div>;
+  if (!product) return <div>Product not found</div>;
+
+  return (
+    <div className="product-detail">
+      <div className="product-main">
+        <img src={product.imageUrl} alt={product.name} />
+        <div className="product-info">
+          <h1>{product.name}</h1>
+          <p className="price">${product.price}</p>
+          <p className="description">{product.description}</p>
+          <button className="add-to-cart-btn">Add to Cart</button>
+        </div>
+      </div>
+      
+      <SimilarProducts productId={product.id} />
+    </div>
+  );
+};
+
+export default ProductDetail;
+3.3. Сервисы API
+productService.js
+
+javascript
+import { api } from './api';
+
+export const productService = {
+  async getProducts() {
+    const response = await api.get('/products');
+    return response.data;
+  },
+
+  async getProductById(id) {
+    const response = await api.get(`/products/${id}`);
+    return response.data;
+  },
+
+  async getSimilarProducts(productId) {
+    const response = await api.get(`/similarproducts/${productId}`);
+    return response.data;
+  },
+
+  async createProduct(productData) {
+    const response = await api.post('/products', productData);
+    return response.data;
+  }
+};
+3.4. Redux Store
+productsSlice.js
+
+javascript
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { productService } from '../../services/productService';
+
+export const fetchProducts = createAsyncThunk(
+  'products/fetchProducts',
+  async () => {
+    const response = await productService.getProducts();
+    return response;
+  }
+);
+
+const productsSlice = createSlice({
+  name: 'products',
+  initialState: {
+    items: [],
+    loading: false,
+    error: null
+  },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchProducts.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchProducts.fulfilled, (state, action) => {
+        state.loading = false;
+        state.items = action.payload;
+      })
+      .addCase(fetchProducts.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      });
+  }
+});
+
+export default productsSlice.reducer;
+3.5. package.json зависимости
+json
+{
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.8.0",
+    "@reduxjs/toolkit": "^1.9.0",
+    "react-redux": "^8.0.0",
+    "axios": "^1.0.0"
+  },
+  "devDependencies": {
+    "vite": "^4.0.0",
+    "@vitejs/plugin-react": "^3.0.0"
+  }
+}
+🚀 Запуск всего проекта
+Запуск Shop.API:
+
+bash
+cd Shop.API
+dotnet run
+Запуск Shop.Admin:
+
+bash
+cd Shop.Admin
+dotnet run
+Запуск Shop.Client:
+
+bash
+cd Shop.Client
+npm install
+npm run dev
