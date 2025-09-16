@@ -1,0 +1,446 @@
+src/
+├── components/
+│   ├── Layout/
+│   │   ├── Header.tsx
+│   │   ├── Footer.tsx
+│   │   └── ProtectedRoute.tsx
+│   ├── Auth/
+│   │   ├── LoginForm.tsx
+│   │   └── RegisterForm.tsx
+│   ├── Search/
+│   │   ├── SearchForm.tsx
+│   │   ├── SearchResults.tsx
+│   │   └── PublicationCard.tsx
+│   ├── UI/
+│   │   ├── Loader.tsx
+│   │   ├── Modal.tsx
+│   │   └── Notification.tsx
+│   └── Common/
+│       ├── Button.tsx
+│       ├── Input.tsx
+│       └── Pagination.tsx
+├── pages/
+│   ├── Home.tsx
+│   ├── Login.tsx
+│   ├── Search.tsx
+│   ├── Results.tsx
+│   └── Profile.tsx
+├── store/
+│   ├── slices/
+│   │   ├── authSlice.ts
+│   │   ├── searchSlice.ts
+│   │   └── uiSlice.ts
+│   ├── api/
+│   │   ├── authApi.ts
+│   │   ├── searchApi.ts
+│   │   └── documentsApi.ts
+│   └── index.ts
+├── hooks/
+│   ├── useAuth.ts
+│   └── useDebounce.ts
+├── utils/
+│   ├── validation.ts
+│   ├── constants.ts
+│   └── helpers.ts
+├── types/
+│   └── index.ts
+├── styles/
+│   ├── globals.css
+│   └── responsive.css
+└── App.tsx
+🛡️ Protected Route Component
+tsx
+// components/Layout/ProtectedRoute.tsx
+import React from 'react';
+import { Navigate } from 'react-router-dom';
+import { useAppSelector } from '../../store';
+
+interface ProtectedRouteProps {
+  children: React.ReactNode;
+}
+
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
+  const { isAuthenticated, isLoading } = useAppSelector(state => state.auth);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
+};
+
+export default ProtectedRoute;
+🎯 Routing Setup
+tsx
+// App.tsx
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { store } from './store';
+import ProtectedRoute from './components/Layout/ProtectedRoute';
+import Home from './pages/Home';
+import Login from './pages/Login';
+import Search from './pages/Search';
+import Results from './pages/Results';
+import Profile from './pages/Profile';
+import Header from './components/Layout/Header';
+import './styles/globals.css';
+
+function App() {
+  return (
+    <Provider store={store}>
+      <Router>
+        <div className="app">
+          <Header />
+          <main className="main-content">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route
+                path="/search"
+                element={
+                  <ProtectedRoute>
+                    <Search />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/results"
+                element={
+                  <ProtectedRoute>
+                    <Results />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
+                }
+              />
+            </Routes>
+          </main>
+        </div>
+      </Router>
+    </Provider>
+  );
+}
+
+export default App;
+🔐 Auth Slice with API
+tsx
+// store/slices/authSlice.ts
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { authAPI } from '../api/authApi';
+
+interface AuthState {
+  user: null | any;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  error: string | null;
+}
+
+const initialState: AuthState = {
+  user: null,
+  isAuthenticated: false,
+  isLoading: false,
+  error: null,
+};
+
+export const login = createAsyncThunk(
+  'auth/login',
+  async (credentials: { login: string; password: string }, { rejectWithValue }) => {
+    try {
+      const response = await authAPI.login(credentials);
+      localStorage.setItem('token', response.data.accessToken);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const getUserInfo = createAsyncThunk(
+  'auth/getUserInfo',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await authAPI.getUserInfo();
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+const authSlice = createSlice({
+  name: 'auth',
+  initialState,
+  reducers: {
+    logout: (state) => {
+      localStorage.removeItem('token');
+      state.user = null;
+      state.isAuthenticated = false;
+    },
+    clearError: (state) => {
+      state.error = null;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(login.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(login.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isAuthenticated = true;
+        state.user = action.payload.user;
+      })
+      .addCase(login.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(getUserInfo.fulfilled, (state, action) => {
+        state.user = action.payload;
+      });
+  },
+});
+
+export const { logout, clearError } = authSlice.actions;
+export default authSlice.reducer;
+🌐 API Services
+tsx
+// store/api/authApi.ts
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+
+export const authAPI = createApi({
+  reducerPath: 'authAPI',
+  baseQuery: fetchBaseQuery({
+    baseUrl: process.env.REACT_APP_API_URL,
+    prepareHeaders: (headers) => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        headers.set('Authorization', `Bearer ${token}`);
+      }
+      return headers;
+    },
+  }),
+  endpoints: (builder) => ({
+    login: builder.mutation({
+      query: (credentials) => ({
+        url: '/account/login',
+        method: 'POST',
+        body: credentials,
+      }),
+    }),
+    getUserInfo: builder.query({
+      query: () => '/account/info',
+    }),
+  }),
+});
+
+export const { useLoginMutation, useGetUserInfoQuery } = authAPI;
+🔍 Search API
+tsx
+// store/api/searchApi.ts
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+
+export const searchAPI = createApi({
+  reducerPath: 'searchAPI',
+  baseQuery: fetchBaseQuery({
+    baseUrl: process.env.REACT_APP_API_URL,
+    prepareHeaders: (headers) => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        headers.set('Authorization', `Bearer ${token}`);
+      }
+      return headers;
+    },
+  }),
+  endpoints: (builder) => ({
+    searchHistograms: builder.mutation({
+      query: (searchParams) => ({
+        url: '/objectsearch/histograms',
+        method: 'POST',
+        body: searchParams,
+      }),
+    }),
+    searchObjects: builder.mutation({
+      query: (searchParams) => ({
+        url: '/objectsearch',
+        method: 'POST',
+        body: searchParams,
+      }),
+    }),
+    getDocuments: builder.mutation({
+      query: (documentIds) => ({
+        url: '/documents',
+        method: 'POST',
+        body: { ids: documentIds },
+      }),
+    }),
+  }),
+});
+
+export const { 
+  useSearchHistogramsMutation, 
+  useSearchObjectsMutation, 
+  useGetDocumentsMutation 
+} = searchAPI;
+📱 Responsive Design
+css
+/* styles/responsive.css */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    padding: 1rem;
+  }
+  
+  .search-form {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .results-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .publication-card {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0.5rem;
+  }
+  
+  .modal-content {
+    width: 95%;
+    margin: 5% auto;
+  }
+}
+⚡ Main Search Component
+tsx
+// pages/Search.tsx
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAppDispatch } from '../store';
+import { useSearchHistogramsMutation, useSearchObjectsMutation } from '../store/api/searchApi';
+import SearchForm from '../components/Search/SearchForm';
+import Loader from '../components/UI/Loader';
+import Notification from '../components/UI/Notification';
+
+const Search: React.FC = () => {
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const [searchHistograms, { isLoading: histogramsLoading }] = useSearchHistogramsMutation();
+  const [searchObjects, { isLoading: objectsLoading }] = useSearchObjectsMutation();
+  const [error, setError] = useState<string>('');
+
+  const handleSearch = async (searchParams: any) => {
+    try {
+      setError('');
+      
+      // Запрос гистограмм и объектов параллельно
+      const [histogramsResponse, objectsResponse] = await Promise.all([
+        searchHistograms(searchParams).unwrap(),
+        searchObjects(searchParams).unwrap()
+      ]);
+
+      // Сохраняем результаты в store и переходим к результатам
+      navigate('/results', { 
+        state: { 
+          histograms: histogramsResponse, 
+          objectIds: objectsResponse.items 
+        } 
+      });
+      
+    } catch (err: any) {
+      setError(err.message || 'Ошибка поиска');
+    }
+  };
+
+  return (
+    <div className="search-page">
+      <h1>Поиск публикаций</h1>
+      <SearchForm onSubmit={handleSearch} />
+      
+      {(histogramsLoading || objectsLoading) && <Loader />}
+      {error && <Notification message={error} type="error" />}
+    </div>
+  );
+};
+
+export default Search;
+📊 Results Component with Pagination
+tsx
+// pages/Results.tsx
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import { useGetDocumentsMutation } from '../store/api/searchApi';
+import SearchResults from '../components/Search/SearchResults';
+import Loader from '../components/UI/Loader';
+
+const Results: React.FC = () => {
+  const location = useLocation();
+  const [getDocuments, { isLoading }] = useGetDocumentsMutation();
+  const [documents, setDocuments] = useState<any[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const { histograms, objectIds } = location.state || {};
+  const itemsPerPage = 10;
+
+  useEffect(() => {
+    loadDocuments();
+  }, [currentPage]);
+
+  const loadDocuments = async () => {
+    if (!objectIds) return;
+
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const idsToLoad = objectIds.slice(startIndex, endIndex);
+
+    try {
+      const response = await getDocuments(idsToLoad).unwrap();
+      setDocuments(prev => [...prev, ...response]);
+    } catch (error) {
+      console.error('Error loading documents:', error);
+    }
+  };
+
+  const handleLoadMore = () => {
+    setCurrentPage(prev => prev + 1);
+  };
+
+  const hasMore = objectIds && documents.length < objectIds.length;
+
+  return (
+    <div className="results-page">
+      <h1>Результаты поиска</h1>
+      
+      {histograms && (
+        <div className="summary">
+          <h3>Сводная информация</h3>
+          <p>Найдено публикаций: {objectIds?.length || 0}</p>
+          {/* Отображение гистограмм */}
+        </div>
+      )}
+
+      <SearchResults documents={documents} />
+      
+      {isLoading && <Loader />}
+      
+      {hasMore && !isLoading && (
+        <button onClick={handleLoadMore} className="load-more-btn">
+          Показать еще
+        </button>
+      )}
+    </div>
+  );
+};
+
+export default Results;
